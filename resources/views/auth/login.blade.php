@@ -1,5 +1,6 @@
 @extends('layout.master')
 @section('content')
+
 <form action="{{ url('/login') }}" method="POST">
     {{ csrf_field() }}
     <label for="email">Email</label>

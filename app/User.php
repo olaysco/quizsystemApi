@@ -2,14 +2,14 @@
 
 namespace App;
 
-use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+//use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
     use Notifiable;
-    protected $connection = 'mongodb';
+    //protected $connection = 'mongodb';
 
     /**
      * The attributes that are mass assignable.
