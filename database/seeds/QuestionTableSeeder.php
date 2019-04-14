@@ -18,7 +18,7 @@ class QuestionTableSeeder extends Seeder
             );
             factory(App\Answer::class,1)->create(
                 ['question_id'=>$question->id,
-                'option_id'=>$this->getRandomAnswerId($question)]
+                 'option_id'=>$this->getRandomAnswerId($question)]
             );
             $question->categories()->save($this->getRandomCategories());
         });

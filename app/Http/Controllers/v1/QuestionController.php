@@ -144,7 +144,51 @@ class QuestionController extends Controller
      */
     public function update(Request $request, Question $question)
     {
-        //
+        $validate  = Validator::make($request->all(),[
+            'question_text'=>'required',
+            'question_type'=>['required',Rule::in(['multi','binary'])],
+            'options'=>'required|array|distinct',
+            'category_id'=>'required|integer|exists:Categories,id',
+            'answer'=>'required|in_array:options.*',
+        ]);
+
+        if($validate->fails()){
+            return response()->json($validate->errors(), 200, []);
+        }else{
+            $question->question_text = $request->get('question_text');
+            $question->question_type = $request->get('question_type');
+            
+            for($i=0; $i<count($request->get('options')); $i++){
+                Option::where('id', $question->options[$i]->id)
+                        ->update(['options_text'=> $request->get('options')[$i]]);
+                if($request->get('options')[$i] === $request->get('answer')){
+                    Answer::where('id', $question->answer->id)
+                            ->update(['option_id'=> $question->options[$i]->id ]);
+                }
+                
+            }
+            $question->categories()->detach($question->categories->first()->id);
+            $question->save();
+            $categories = $question->categories()->save(Category::where('id',$request->get('category_id'))->first());
+            $questions = $question->whereId($question->id)->get()->each(function($q){
+                $q->options;
+                $q->answer;
+            });
+            $questions->push(["categories"=>$categories]);
+             return response()->json($questions, 200, []);
+        }
+    }
+
+    /**
+     * Updates options to a question
+     * 
+     * @param \App\Question $question
+     * @param Request $request
+     * 
+     * @return boolean;
+     */
+    public function updateQuestionOption(Question $question, Request $request){
+        
     }
 
     /**

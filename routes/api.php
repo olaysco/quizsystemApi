@@ -16,15 +16,16 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/test', function(Request $request){
-    return response()->json(["hello test"], 200,[]);
+Route::middleware('auth:api')->post('/user', function (Request $request) {
+    return $request->user();
 });
 
 Route::group(['prefix' => 'v1','namespace'=>'v1'], function () {
     //this routes belongs to authenticated users
-    Route::get('all_question','QuestionController@index');
+    Route::get('question/all','QuestionController@index');
     Route::get('question', 'QuestionController@getCategoryQuestion');
-    Route::get('all_category', 'CategoryController@index');
+    Route::get('category/all', 'CategoryController@index');
+    Route::post('evaluate', 'AnswersController@evaluate');
 
     /**
      * This route group works
@@ -33,16 +34,33 @@ Route::group(['prefix' => 'v1','namespace'=>'v1'], function () {
      * admin roles
      */
     Route::group(['prefix' => 'admin'], function () {
-        Route::post('/add_question','QuestionController@store');
-        Route::post('/add_category','CategoryController@store');
-        Route::get('/add_question',function(){ 
+        Route::post('/question/add','QuestionController@store');
+        Route::post('/category/add','CategoryController@store');
+        Route::get('/category/question/{category}','CategoryController@categoryQuestions');
+        Route::get('/question/add',function(){ 
             return response()->json(["message"=>"invalid"], 403, []);
          });
-         Route::get('/add_category',function(){ 
+         Route::get('/category/add',function(){ 
             return response()->json(["message"=>"invalid"], 403, []);
          });
-        Route::get('/',function(){
-            return response()->json(true, 200, []);
-        });
+         Route::post('/category/edit/{category}','CategoryController@update');
+         Route::get('/category/edit',function(){ 
+            return response()->json(["message"=>"invalid"], 403, []);
+         });
+         Route::post('/question/edit/{question}','QuestionController@update');
+         Route::get('/question/edit',function(){ 
+            return response()->json(["message"=>"invalid"], 403, []);
+         });
+
+
     });
+    
+
+});
+
+Route::fallback(function(){
+    return response()->json(["message"=>"invalid request"], 404, []);
+});
+Route::fallback(function(Request $request){
+    return response()->json(["message"=>"invalid request"], 404, []);
 });
