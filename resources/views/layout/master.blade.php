@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>API Build</title>
+    <title>Quiz System</title>
 </head>
 <body>
     <div class="container">

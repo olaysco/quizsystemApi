@@ -16,11 +16,12 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::middleware('auth:api')->post('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('login', 'PassportController@login');
+Route::post('register', 'PassportController@register');
+Route::post('admin/register', 'PassportController@administratorsRegister');
+Route::post('admin/login', 'PassportController@administratorsLogin');
 
-Route::group(['prefix' => 'v1','namespace'=>'v1'], function () {
+Route::group(['prefix' => 'v1','namespace'=>'v1', 'middleware'=>'auth:api'], function () {
     //this routes belongs to authenticated users
     Route::get('question/all','QuestionController@index');
     Route::get('question', 'QuestionController@getCategoryQuestion');
@@ -33,7 +34,7 @@ Route::group(['prefix' => 'v1','namespace'=>'v1'], function () {
      * to prevent normal users from performing
      * admin roles
      */
-    Route::group(['prefix' => 'admin'], function () {
+    Route::group(['prefix' => 'admin', 'middleware'=>'scopes:update,create,delete'], function () {
         Route::post('/question/add','QuestionController@store');
         Route::post('/category/add','CategoryController@store');
         Route::get('/category/question/{category}','CategoryController@categoryQuestions');
