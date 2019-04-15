@@ -4,20 +4,34 @@ namespace App\Repositories;
 
 use App\Category;
 use App\Question;
+use App\Answer;
 
-class CategoryRepository{
+class QuestionRepository{
 
     /**
      * 
-     * Gets all the question for a given category
+     * Transforms  question_id 
+     * into question model
      * 
-     * @param category
-     * @return collection
+     * @param int question_id
+     * @return App/Question
      */
-
-     public function question($question_id){
-         return Question::whereId($question_id)->get();
+    protected $answer;
+    public function getQuestion($question_id){
+        $question = Question::whereId($question_id)->first();
+        return $question;
+        //$this->setAnswer($question->answer);   
      }
+
+    //  private function setAnswer(Answer $answer){
+    //     $this->answer = $answer;
+    //  }
+
+    //  public function getAnswer(){
+    //      return $this->answer;
+    //  }
+
+
 
 
 }
